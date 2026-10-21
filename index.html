@@ -18,10 +18,6 @@
   audio { width: 100%; margin: 6px 0 2px; }
   .label { font-size: 15px; margin-top: 12px; }
   button { width: 100%; padding: 16px; font-size: 18px; border-radius: 12px; border: 0; background: var(--accent); color: #222; font-weight: 600; margin-top: 8px; }
-  .pick { display: flex; gap: 8px; margin: 10px 0 4px; }
-  .pick label { flex: 1; text-align: center; padding: 12px 6px; border: 1px solid var(--line); border-radius: 10px; font-size: 16px; }
-  .pick input { display: none; }
-  .pick input:checked + span { color: var(--accent); font-weight: 700; }
   .row { display: flex; gap: 10px; align-items: center; margin-top: 10px; color: var(--dim); font-size: 14px; }
   input[type=range] { flex: 1; }
   a { color: var(--accent); }
@@ -33,57 +29,49 @@
 <body>
 <main>
   <h1>Mantra · work in progress</h1>
-  <div class="when">DJ Mantra toning · updated 21.10.2026, evening</div>
+  <div class="when">DJ Mantra toning · updated 21.10.2026, night</div>
 
   <section>
-    <h2>Toning song v5: your new vowels (take 2 recording)</h2>
-    <p>Suno Cover of your clean recording "marko-vowels-take2", 6:00 each. Two takes; tell me 1 or 2.</p>
-    <div class="label">Song v5 take 1</div>
-    <audio controls preload="none" src="audio/toning-song-v5-take1.m4a"></audio>
-    <div class="label">Song v5 take 2</div>
-    <audio controls preload="none" src="audio/toning-song-v5-take2.m4a"></audio>
-    <div class="label">Your recording, the reference (0:41, clean: peak −2.9 dB)</div>
-    <audio controls preload="none" src="audio/marko-vowels-take2.m4a"></audio>
-  </section>
-
-  <section>
-    <h2>Preview: meditation voice v4 + song v5</h2>
-    <p>The two whole files played together, nothing cut, as the page would do it.</p>
-    <div class="pick">
-      <label><input type="radio" name="take" value="1" checked><span>Song v5 take 1</span></label>
-      <label><input type="radio" name="take" value="2"><span>Song v5 take 2</span></label>
-    </div>
+    <h2>Preview: meditation voice v5 + song v5</h2>
+    <p>Voice v5: plain English, no Croatian, read by the cloned "Meditation Guide Voice" in DaVinci Resolve. Song v5: take 1 from your clean vowels. Both whole files, played together.</p>
     <button id="both">▶ Play both</button>
-    <div class="row">Music <input id="mix" type="range" min="0" max="100" value="35"> <span id="mixv">35%</span></div>
+    <div class="row">Music <input id="mix" type="range" min="0" max="100" value="25"> <span id="mixv">25%</span></div>
     <div class="row" id="pos">0:00</div>
-    <audio id="v" preload="auto" src="audio/meditation-voice-v4.m4a"></audio>
-    <audio id="s" preload="auto" src="audio/toning-song-v5-take1.m4a"></audio>
+    <audio id="v" preload="auto" src="audio/meditation-voice-v5-resolve.m4a"></audio>
+    <audio id="s" preload="auto" src="audio/toning-song-v5.m4a"></audio>
   </section>
 
   <section>
-    <h2>Cloned voice: local engine vs DaVinci Resolve</h2>
-    <p>The same sentence in the cloned Meditation Guide voice. Resolve's first try says an extra word ("elements") taken from the sample; the trained Resolve model "Meditation Guide Voice" is being made.</p>
-    <div class="label">Local engine (MANTRA_VOICE, meditation-guide)</div>
+    <h2>Meditation voice v5 alone (Resolve, 4:24)</h2>
+    <p>15 parts made in Resolve's Speech Generator (it takes 350 characters at a time), placed on one Resolve timeline with a 3-second pause between sections, exported by Resolve. Nothing cut by command line.</p>
+    <audio controls preload="none" src="audio/meditation-voice-v5-resolve.m4a"></audio>
+  </section>
+
+  <section>
+    <h2>Cloned voice: local engine vs Resolve (one sentence)</h2>
+    <p>The local engine could not read the whole text in one go (it stopped after 26 seconds), so only this short comparison exists for it.</p>
+    <div class="label">Local engine (meditation-guide)</div>
     <audio controls preload="none" src="audio/clone-test-local.m4a"></audio>
-    <div class="label">DaVinci Resolve (Custom Voice from the sample)</div>
+    <div class="label">Resolve, first sample (with the extra word "elements")</div>
     <audio controls preload="none" src="audio/clone-test-resolve.m4a"></audio>
   </section>
 
   <section>
     <h2>For comparison</h2>
-    <div class="label">Song v3 take 1 — on the live page now (6:00)</div>
-    <audio controls preload="none" src="audio/toning-song-v3.m4a"></audio>
-    <div class="label">Meditation voice v4 — one whole Hume take (5:17)</div>
+    <div class="label">Meditation voice v4 — the Hume original (live now)</div>
     <audio controls preload="none" src="audio/meditation-voice-v4.m4a"></audio>
+    <div class="label">Toning song v5 alone (live now)</div>
+    <audio controls preload="none" src="audio/toning-song-v5.m4a"></audio>
+    <div class="label">Your vowels, the reference</div>
+    <audio controls preload="none" src="audio/marko-vowels-take2.m4a"></audio>
   </section>
 
   <section>
     <h2>Where we are</h2>
     <table>
-      <tr><td>Live</td><td><a href="https://djmantra.pages.dev">djmantra.pages.dev</a> = page v54 (song v3 + voice v4)</td></tr>
-      <tr><td>New</td><td>song v5 takes 1 and 2 from your clean recording: your choice</td></tr>
-      <tr><td>Discarded</td><td>song v4 (from the distorted recording)</td></tr>
-      <tr><td>Working</td><td>Resolve voice model "Meditation Guide Voice" training</td></tr>
+      <tr><td>Live</td><td><a href="https://djmantra.pages.dev">djmantra.pages.dev</a> = page v55 (song v5 + voice v4)</td></tr>
+      <tr><td>New</td><td>voice v5 (Resolve clone, plain English): your yes, then page v56</td></tr>
+      <tr><td>Resolve</td><td>voice model "Meditation Guide Voice" trained, in Resolve for every project</td></tr>
     </table>
   </section>
 </main>
@@ -92,12 +80,6 @@
   const mix = document.getElementById('mix'), mixv = document.getElementById('mixv'), pos = document.getElementById('pos');
   const setMix = () => { s.volume = mix.value / 100; mixv.textContent = mix.value + '%'; };
   mix.oninput = setMix; setMix();
-  document.querySelectorAll('input[name=take]').forEach(r => r.onchange = () => {
-    const playing = !v.paused; v.pause(); s.pause();
-    s.src = 'audio/toning-song-v5-take' + r.value + '.m4a'; setMix();
-    v.currentTime = 0; b.textContent = '▶ Play both';
-    if (playing) b.click();
-  });
   b.onclick = () => {
     if (v.paused) { s.currentTime = v.currentTime; Promise.all([v.play(), s.play()]); b.textContent = '❚❚ Pause'; }
     else { v.pause(); s.pause(); b.textContent = '▶ Play both'; }
