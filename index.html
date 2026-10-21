@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mantra · work in progress</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { --bg: #2b2b2b; --card: #353535; --line: #444; --text: #eee; --dim: #aaa; --accent: #e8b04a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 22px; margin: 4px 0 2px; }
+  .when { color: var(--dim); font-size: 14px; margin-bottom: 18px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 14px 0; }
+  h2 { font-size: 18px; margin: 0 0 4px; }
+  p { margin: 6px 0 10px; color: var(--dim); font-size: 15px; }
+  audio { width: 100%; margin: 6px 0 2px; }
+  .label { font-size: 15px; margin-top: 10px; }
+  button { width: 100%; padding: 16px; font-size: 18px; border-radius: 12px; border: 0; background: var(--accent); color: #222; font-weight: 600; }
+  .row { display: flex; gap: 10px; align-items: center; margin-top: 10px; color: var(--dim); font-size: 14px; }
+  input[type=range] { flex: 1; }
+  a { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td { padding: 6px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+  td:first-child { color: var(--dim); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Mantra · work in progress</h1>
+  <div class="when">DJ Mantra toning · updated 21.10.2026</div>
+
+  <section>
+    <h2>Page v55 preview: voice v4 + song v4</h2>
+    <p>The two whole files played together, nothing cut, as the page does it. The song is your own vowels (Suno Cover of your recording, take 2).</p>
+    <button id="both">▶ Play both</button>
+    <div class="row">Music <input id="mix" type="range" min="0" max="100" value="35"> <span id="mixv">35%</span></div>
+    <div class="row" id="pos">0:00</div>
+    <audio id="v" preload="auto" src="audio/meditation-voice-v4.m4a"></audio>
+    <audio id="s" preload="auto" src="audio/toning-song-v4.m4a"></audio>
+  </section>
+
+  <section>
+    <h2>Cloned voice: local engine vs DaVinci Resolve</h2>
+    <p>The same sentence in the cloned Meditation Guide voice. Resolve's first try says an extra word ("elements") taken from the sample; the trained Resolve model comes next.</p>
+    <div class="label">Local engine (MANTRA_VOICE, meditation-guide)</div>
+    <audio controls preload="none" src="audio/clone-test-local.m4a"></audio>
+    <div class="label">DaVinci Resolve (Custom Voice from the sample)</div>
+    <audio controls preload="none" src="audio/clone-test-resolve.m4a"></audio>
+  </section>
+
+  <section>
+    <h2>Toning songs</h2>
+    <div class="label">Song v4 take 2 — your own vowels (6:00)</div>
+    <audio controls preload="none" src="audio/toning-song-v4.m4a"></audio>
+    <div class="label">Song v3 take 1 — on the live page (6:00)</div>
+    <audio controls preload="none" src="audio/toning-song-v3.m4a"></audio>
+  </section>
+
+  <section>
+    <h2>Voices</h2>
+    <div class="label">Meditation voice v4 — one whole Hume take (5:17)</div>
+    <audio controls preload="none" src="audio/meditation-voice-v4.m4a"></audio>
+    <div class="label">Your vowels, the reference (0:57)</div>
+    <audio controls preload="none" src="audio/marko-vowels-reference.m4a"></audio>
+  </section>
+
+  <section>
+    <h2>Where we are</h2>
+    <table>
+      <tr><td>Live</td><td><a href="https://djmantra.pages.dev">djmantra.pages.dev</a> = page v54 (song v3 + voice v4)</td></tr>
+      <tr><td>Ready</td><td>page v55 (song v4 + voice v4), waiting for your choice</td></tr>
+      <tr><td>Working</td><td>Resolve voice model "Meditation Guide Voice" training; then voice v5 that sings your vowels</td></tr>
+    </table>
+  </section>
+</main>
+<script>
+  const v = document.getElementById('v'), s = document.getElementById('s'), b = document.getElementById('both');
+  const mix = document.getElementById('mix'), mixv = document.getElementById('mixv'), pos = document.getElementById('pos');
+  const setMix = () => { s.volume = mix.value / 100; mixv.textContent = mix.value + '%'; };
+  mix.oninput = setMix; setMix();
+  b.onclick = () => {
+    if (v.paused) { s.currentTime = v.currentTime; Promise.all([v.play(), s.play()]); b.textContent = '❚❚ Pause'; }
+    else { v.pause(); s.pause(); b.textContent = '▶ Play both'; }
+  };
+  const fmt = t => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+  setInterval(() => { const t = Math.max(v.currentTime, s.currentTime); pos.textContent = fmt(t) + ' / ' + fmt(Math.max(v.duration || 0, s.duration || 0)); }, 500);
+</script>
+<script src="https://speechifykeys.pages.dev/speechify-keys.js" defer></script>
+</body>
+</html>
