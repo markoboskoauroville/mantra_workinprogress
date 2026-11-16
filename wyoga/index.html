@@ -174,5 +174,18 @@ function fb(){var r=document.createRange();r.selectNodeContents(document.getElem
 })});
 </script>
 <script src="https://speechifykeys.pages.dev/speechify-keys.js" defer></script>
+<section><h2>Pose detection: what each platform has</h2>
+<p>A pose engine is a neural network that finds the body's joints in each camera frame; the skeleton is the lines between them. Some systems have one built in, others need the app to bring its own.</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px">
+<tr><th align=left>Engine</th><th align=left>Where</th><th align=left>Points</th><th align=left>3D</th><th align=left>Notes</th></tr>
+<tr><td>Apple Vision (built into the system)</td><td>iPhone, iPad, Mac (since iOS 14 / macOS 11, 2020)</td><td>19 (ankles and wrists are the ends: no heels, toes or fingers)</td><td>Yes, 17 joints in metres, since iOS 17 / macOS 14 (2023)</td><td>Free, on the device, very fast on Apple's chip, several people. Apple only.</td></tr>
+<tr><td>Google MediaPipe Pose Landmarker (BlazePose)</td><td>Android, iPhone, web browser, desktop</td><td>33 (incl. heels, toe tips, index fingers, thumbs, pinkies)</td><td>Yes, "world" coordinates in metres</td><td>Free, on the device, lite/full/heavy models (speed vs precision), optional body mask. The same engine everywhere.</td></tr>
+<tr><td>Google ML Kit Pose Detection</td><td>Android, iPhone</td><td>33 (BlazePose)</td><td>Depth per point (z)</td><td>Free, easy for native apps, one person.</td></tr>
+<tr><td>TensorFlow.js MoveNet</td><td>Web browser</td><td>17</td><td>No</td><td>Very fast (Lightning) or more precise (Thunder); MultiPose up to 6 people.</td></tr>
+<tr><td>Android itself</td><td>-</td><td>-</td><td>-</td><td>No pose engine in the system: every app brings MediaPipe or ML Kit.</td></tr>
+</table>
+<p><b>For Wyoga:</b> MediaPipe Pose Landmarker is the best fit: it runs in the browser (your web app and the Android wrapper), on a native Android app and on iPhone, so the angles and the corrections are the same everywhere. Its 33 points include the heels and toes, which matter for yoga (Tree: the foot on the thigh; Warrior: the front foot turned out; Down Dog: heels to the floor). Use the <i>full</i> model on phones and <i>heavy</i> on computers. Apple Vision is excellent if one day you make a native iPhone app, but it has no feet or hand points, so it is better as a second opinion than as the main engine.</p>
+<p><b>Precision, in practice:</b> all of them are good in a frontal view with the whole body visible and good light. They all struggle with a limb pointing at the camera, a hand behind the back, and side-on poses where one leg hides the other: that is where two cameras help most (see above).</p>
+</section>
 </body>
 </html>
