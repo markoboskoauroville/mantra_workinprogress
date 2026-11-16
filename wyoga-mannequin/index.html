@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wyoga poses: the wooden mannequin</title>
+<meta name="robots" content="noindex">
+<style>
+html{background:#2b2b2b}
+body{margin:0;background:#2b2b2b;color:#e6e6e6;font:16px/1.55 -apple-system,system-ui,sans-serif;padding:0 16px 48px;max-width:760px;margin:0 auto}
+h1{font-size:22px;margin:24px 0 4px}
+h2{font-size:18px;margin:36px 0 8px;color:#fff;border-top:1px solid #555;padding-top:20px}
+h3{font-size:16px;margin:22px 0 6px;color:#fff}
+p,li{margin:8px 0}
+a{color:#9cc9ff}
+code{font:14px ui-monospace,Menlo,monospace;color:#f0d9a8}
+.box{position:relative;background:#1e1e1e;border:1px solid #555;border-radius:8px;margin:14px 0}
+pre{margin:0;padding:48px 12px 12px;white-space:pre-wrap;word-wrap:break-word;font:13.5px/1.5 ui-monospace,Menlo,monospace;color:#ddd}
+.copy{position:absolute;top:8px;right:8px;background:#e6e6e6;color:#222;border:0;border-radius:6px;padding:10px 18px;font-size:15px;font-weight:600}
+.copy.ok{background:#7bd88f}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.grid figure{margin:0}
+.grid img{width:100%;height:auto;display:block;border-radius:6px}
+.grid figcaption{font-size:13px;color:#bbb;margin-top:4px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid #444;padding:5px 6px;text-align:left;vertical-align:top}
+th{color:#fff}
+.album{display:inline-block;background:#e6e6e6;color:#222;border-radius:6px;padding:10px 18px;font-weight:600;text-decoration:none;margin:6px 0}
+</style>
+</head>
+<body>
+<h1>Wyoga poses: the wooden mannequin (16.11.2026)</h1>
+<p>Ten Wyoga poses rendered as still pictures of a classic wooden artist's mannequin: the four wake-up missions
+(Upward Salute, Down Dog, Warrior II, Tree) and the six steps of Wyoga's Sun Salutation (Upward Salute, Forward Fold,
+Plank, Chaturanga, Upward Dog, Down Dog). There is no person in any picture and no drawing by hand: every pose is
+built from numbers and rendered by Blender. This page shows how, with the prompts, so you can repeat it or take it further.</p>
+<p><a class="album" href="https://photos.app.goo.gl/JxjpkqzZ54yTQQnp7">All 16 pictures in full size (Google Photos album)</a></p>
+
+<section><h2>The pictures</h2>
+<p>2048 x 2048 originals in the album (front or side view plus a 3/4 view of each pose); here 1200 px.</p>
+<div class="grid">
+<figure><img src="img/upward-salute.jpg" alt="Wooden mannequin in Upward Salute, front view" loading="lazy"><figcaption>Upward Salute (Urdhva Hastasana)</figcaption></figure>
+<figure><img src="img/down-dog.jpg" alt="Wooden mannequin in Down Dog, side view" loading="lazy"><figcaption>Down Dog (Adho Mukha Svanasana)</figcaption></figure>
+<figure><img src="img/warrior-2.jpg" alt="Wooden mannequin in Warrior II, front view" loading="lazy"><figcaption>Warrior II (Virabhadrasana II)</figcaption></figure>
+<figure><img src="img/tree.jpg" alt="Wooden mannequin in Tree pose, three-quarter view" loading="lazy"><figcaption>Tree (Vrksasana)</figcaption></figure>
+<figure><img src="img/forward-fold.jpg" alt="Wooden mannequin in Forward Fold" loading="lazy"><figcaption>Sun Salutation 2: Forward Fold (Uttanasana)</figcaption></figure>
+<figure><img src="img/plank.jpg" alt="Wooden mannequin in Plank, side view" loading="lazy"><figcaption>Sun Salutation 3: Plank (Phalakasana)</figcaption></figure>
+<figure><img src="img/chaturanga.jpg" alt="Wooden mannequin in Chaturanga, side view" loading="lazy"><figcaption>Sun Salutation 4: Chaturanga (Chaturanga Dandasana)</figcaption></figure>
+<figure><img src="img/upward-dog.jpg" alt="Wooden mannequin in Upward Dog, side view" loading="lazy"><figcaption>Sun Salutation 5: Upward Dog (Urdhva Mukha Svanasana)</figcaption></figure>
+</div>
+</section>
+
+<section><h2>How it was made</h2>
+<p>Everything was written and run by <b>Claude Code</b> (Anthropic's coding agent) on a Mac, as Python scripts for
+<b>Blender 5.2</b> run headless (<code>Blender -b --factory-startup -P script.py</code>: no window, no clicking). The
+agent writes a script, renders, looks at the result images itself, and corrects the script until the poses are right.
+All the code is public: <a href="https://github.com/markoboskoauroville/SKELETON">github.com/markoboskoauroville/SKELETON</a>.</p>
+
+<h3>1. The mannequin (<a href="https://github.com/markoboskoauroville/SKELETON/blob/main/blender/mannequin.py">blender/mannequin.py</a>)</h3>
+<ul>
+<li><b>Parts:</b> egg-shaped head, neck, egg chest (wide at the shoulders), a waist piece, a pelvis block, tapered limb segments with a slight belly, mitten hands with a thumb, rounded feet with a flat sole. All are meshes of revolution (a profile turned around an axis), so the whole file is about 190 kB.</li>
+<li><b>Ball joints</b> at the shoulders, elbows, wrists, hips, knees and ankles, like a real drawing mannequin.</li>
+<li><b>Wood:</b> a procedural material, no textures: a ring wave texture distorted by noise for the grain, a colour ramp between two beech tones, a small bump from the same grain, a thin clear coat.</li>
+<li><b>Skeleton inside:</b> an armature on Apple Vision's 17 3D body joints (root, spine, centre shoulder, centre head, top head, shoulders, elbows, wrists, hips, knees, ankles), so a recording from the camera can drive it directly. Bones: pelvis, chest, neck, head, and for each side clavicle, upper arm, forearm, hand, hip, thigh, shin, foot.</li>
+<li><b>Rigid parenting:</b> every wooden part hangs on exactly one bone, no skin weights, exactly like a real mannequin: nothing stretches, nothing bends inside a segment.</li>
+<li><b>Studio:</b> a light grey seamless cyclorama (floor curving into the wall), three soft disc area lights (key, fill, and a rim light placed high so its back side never draws a line on the wall), a camera.</li>
+</ul>
+
+<h3>2. The poses (<a href="https://github.com/markoboskoauroville/SKELETON/blob/main/blender/yoga_poses.py">blender/yoga_poses.py</a>)</h3>
+<ul>
+<li><b>Joint targets in 3D,</b> built from the mannequin's own bone lengths (so nothing has to stretch): the torso as directions of four segments (pelvis, chest, neck, head), straight limbs as directions, bent limbs by two-bone IK (hip, target ankle, knee pointing a chosen way). Coordinates: Z up, the body faces -Y, its left is +X.</li>
+<li><b>Bone aiming with twist references:</b> each bone's Y axis is aimed from its joint to the next joint. The torso takes its twist from the hip line (pelvis) and the shoulder line (chest, neck, head). Limbs take the smallest rotation from where the parent carries them (no twist flips). Hands and feet get explicit frames: the direction of the fingers or toes plus the direction the palm or sole faces (palms flat on the floor, toes tucked in Plank and Chaturanga, tops of the feet down in Upward Dog).</li>
+<li><b>Floor contact solving:</b> in the poses that stand on hands and feet, one angle is free (the body line in Plank, the leg angle in Down Dog and Upward Dog, the hip fold in Forward Fold). It is solved by bisection: pose, measure the lowest point of the wooden hands and of the wooden feet, adjust, until both touch the floor to the millimetre. Then the whole body is lowered so its lowest point sits exactly on the floor.</li>
+<li><b>Render:</b> EEVEE, 128 samples with ray tracing, 2048 x 2048, JPEG quality 90. The body turns, not the camera, so the camera always looks into the curve of the cyclorama. The camera distance is fitted to the body's real outline in each view.</li>
+<li><b>Checking:</b> every still was looked at: arms straight and parallel in Upward Salute; Down Dog an inverted V with about 83° at the hips, arms and back in one line, head between the arms, heels down; Warrior II front knee over the ankle at about 90°, back leg straight, back foot turned in 15°, arms level; Tree with the sole on the inner thigh above the knee and the knee open; Plank one straight line from head to heels with wrists under the shoulders; Chaturanga elbows at 90° against the ribs; Upward Dog arms straight, chest up, thighs off the floor. Two first attempts were wrong and redone: the first Forward Fold read as a stack of eggs from the pure side (the near arm hid the torso), and the first Upward Dog rested the thighs on the floor.</li>
+</ul>
+
+<h3>Measured angles of the final poses</h3>
+<p>Measured on the posed skeleton (degrees; 180 = straight). Hip = angle shoulder centre, hip, knee; shoulder = angle hip, shoulder, elbow; torso = tilt of the hip-to-shoulder line from vertical.</p>
+<div class="tw"><table>
+<tr><th>Pose</th><th>Torso</th><th>Knee L / R</th><th>Hip L / R</th><th>Elbow L / R</th><th>Shoulder L / R</th></tr>
+<tr><td>Upward Salute</td><td>1</td><td>180 / 180</td><td>169 / 169</td><td>179 / 179</td><td>173 / 173</td></tr>
+<tr><td>Down Dog</td><td>136</td><td>180 / 180</td><td>83 / 83</td><td>180 / 180</td><td>169 / 169</td></tr>
+<tr><td>Warrior II (left leg in front)</td><td>0</td><td>98 / 180</td><td>109 / 136</td><td>180 / 180</td><td>101 / 101</td></tr>
+<tr><td>Tree (standing on the right)</td><td>0</td><td>21 / 180</td><td>125 / 169</td><td>77 / 77</td><td>34 / 34</td></tr>
+<tr><td>Forward Fold</td><td>158</td><td>180 / 180</td><td>18 / 18</td><td>180 / 180</td><td>170 / 170</td></tr>
+<tr><td>Plank</td><td>75</td><td>180 / 180</td><td>169 / 169</td><td>180 / 180</td><td>75 / 75</td></tr>
+<tr><td>Chaturanga</td><td>87</td><td>180 / 180</td><td>169 / 169</td><td>91 / 91</td><td>11 / 11</td></tr>
+<tr><td>Upward Dog</td><td>54</td><td>180 / 180</td><td>160 / 160</td><td>180 / 180</td><td>55 / 55</td></tr>
+</table></div>
+<p>(Hip 169 in the straight poses, not 180, because the hip joints sit a little in front of the line from the root to the shoulders on this mannequin.)
+The five floor poses are also in the app's pose file as 2D side-view keypoints with spoken cues:
+<a href="https://github.com/markoboskoauroville/SKELETON/blob/main/data/poses.json">data/poses.json</a>.</p>
+
+<h3>3. The live chain: from a person in front of the camera to the mannequin</h3>
+<ul>
+<li><b>Skeleton (Mantra),</b> a Mac app (Swift), follows the body with Apple Vision: 2D joints on the picture all the time, and Vision's 3D body pose (17 joints in metres) while recording. It compares the live pose with a target pose (green / yellow / red per limb, three levels).</li>
+<li><b>Several cameras</b> (up to four: Mac cameras, a Sony, Android phones over USB): a calibration wizard with a printed circle-grid board, then each joint is triangulated from every camera that sees it, confidence-weighted, a disagreeing view rejected.</li>
+<li><b>RECORD</b> writes a <code>.skel.json</code> file: time, 2D and 3D joints per frame, body height. The format: <a href="https://github.com/markoboskoauroville/SKELETON/blob/main/docs/skel-format.md">docs/skel-format.md</a>.</li>
+<li><b>Cleanup engine</b> (<a href="https://github.com/markoboskoauroville/SKELETON/tree/main/cleanup">cleanup/</a>, <code>skelclean</code>): fixes left/right swaps, removes outliers, fills gaps, filters jitter (One Euro, forward and backward), keeps bone lengths constant, limits knees and elbows, locks feet on the floor, with presets such as <i>yoga-hold</i>. A recording can also be exported for a Claude cleanup and imported back with checks.</li>
+<li><b>RENDER MANNEQUIN</b> runs <a href="https://github.com/markoboskoauroville/SKELETON/blob/main/blender/render_mannequin.py">blender/render_mannequin.py</a>: the same mannequin moves exactly as the person moved and an MP4 lands on the Desktop (about 11 s of rendering per second of movement).</li>
+</ul>
+</section>
+
+<section><h2>Prompts you can reuse</h2>
+<p>These are the instructions that produced the mannequin and the poses, written so you can give them to Claude Code or any coding agent that can run Blender on your computer. Paste them in order.</p>
+
+<h3>1. Build the mannequin</h3>
+<div class="box"><button class="copy" data-t="p1">Copy</button><pre id="p1">Write a Python script mannequin.py for Blender 5.x, run headless (Blender -b --factory-startup -P mannequin.py), that builds a classic wooden artist's drawing mannequin and saves it as mannequin.blend.
+
+Body: egg-shaped head (no face), neck, egg-shaped chest wider at the shoulders, a waist piece, a pelvis block, tapered limb segments with a slight belly and rounded ends, ball joints at the shoulders, elbows, wrists, hips, knees and ankles, mitten hands (a flat paddle with a thumb), simple rounded feet with a flat sole. Build every part as a mesh of revolution (a profile turned around its axis) with smooth shading. Rest pose: T-pose, 1.75 m tall, facing -Y, its left on +X, soles on Z = 0.
+
+Material: procedural light beech wood, no image textures: a Wave texture (rings) distorted by noise for the grain, a colour ramp between a light and a darker beech tone, a small bump from the same grain, a thin clear coat.
+
+Skeleton: an armature inside the body with bones on Apple Vision's 17 3D joints (root, spine, centerShoulder, centerHead, topHead, left/right shoulder, elbow, wrist, hip, knee, ankle): pelvis root->spine, chest spine->centerShoulder, neck, head, and per side clavicle, upper arm, forearm, hand, hip, thigh, shin, foot. Parent every wooden part rigidly to one bone (parent type BONE, keep its world position), no skin weights, like a real mannequin.
+
+Studio: a light grey seamless cyclorama (floor curving up into a back wall), three soft disc area lights (key, fill, and a rim light placed high so its back side never draws a line on the wall), a camera, EEVEE.
+
+Render a front still and a 3/4 still of the rest pose, look at them, and fix anything that does not look like a classic wooden mannequin.</pre></div>
+
+<h3>2. Pose it and render stills</h3>
+<div class="box"><button class="copy" data-t="p2">Copy</button><pre id="p2">Write yoga_poses.py for Blender 5.x (headless) that opens mannequin.blend and renders still pictures of the mannequin in yoga poses.
+
+For each pose, build 3D joint targets from the mannequin's own bone lengths: torso as directions of pelvis, chest, neck and head; straight limbs as directions; bent limbs with two-bone IK (root joint, target end joint, a pole direction for the knee or elbow). Pose the armature by aiming each bone from its joint to the next joint; take the torso's twist from the hip line and the shoulder line; give limbs the smallest rotation from where their parent carries them; give hands and feet explicit frames (finger/toe direction plus the direction the palm/sole faces). Compute every bone's basis matrix from the target pose matrices: basis = (parent_rest^-1 * rest)^-1 * parent_pose^-1 * pose.
+
+Poses with hands and feet on the floor (Down Dog, Plank, Chaturanga, Upward Dog, Forward Fold): leave one angle free and solve it by bisection until the lowest point of the wooden hands and of the wooden feet are both on the floor. Then move the body so its lowest point is exactly on the floor.
+
+Views: front and 3/4 for standing poses, side and 3/4 for floor poses. Turn the body, not the camera, so the camera always looks into the cyclorama; fit the camera distance to the body's outline. Render EEVEE, 128 samples with ray tracing, 2048 x 2048 JPEG quality 90, no text on the image, the pose name in the file name ("03 Warrior II - Virabhadrasana II (front).jpg").
+
+Look at every picture yourself and check yoga alignment (straight lines, knee over ankle, wrists under shoulders, hands and feet on the floor, nothing floating or sunk). Fix and render again until every pose is correct.</pre></div>
+
+<h3>3. The pose definitions as data</h3>
+<p>What each pose was built from (body facing -Y, left = +X; angles in degrees). Give this to the agent with prompt 2, or use it as target poses in your own app.</p>
+<div class="box"><button class="copy" data-t="p3">Copy</button><pre id="p3">{
+ "upward-salute": {"view": "front", "torso": "vertical, chest lifted 2, head tilted back 17 (gaze up)",
+   "arms": "straight overhead, 4 out from vertical, palms facing each other", "legs": "straight, hip width, feet flat"},
+ "down-dog": {"view": "side", "arms_and_back": "one straight line, 46 below horizontal from the hips to the hands, head between the arms",
+   "legs": "straight, angle solved so hands and feet both touch (about 51 below horizontal)", "hip_angle": 83,
+   "hands": "flat, fingers forward", "feet": "flat, heels down"},
+ "warrior-2": {"view": "front", "front_leg": "left; thigh 8 below horizontal toward the side, shin vertical, knee over the ankle",
+   "back_leg": "straight, ankle at the same height as the front ankle (feet about 1.4 m apart)",
+   "front_foot": "points to the front of the mat", "back_foot": "turned in 15", "torso": "vertical, hips open to the front",
+   "arms": "horizontal, palms down"},
+ "tree": {"view": "front + 3/4", "standing_leg": "right, straight", "lifted_leg": "left; sole on the inner right thigh above the knee (ankle at 0.80 m), knee open to the side",
+   "hands": "palms together in front of the chest, fingers up", "torso": "vertical"},
+ "forward-fold": {"view": "side turned 28 to the front", "legs": "straight, vertical", "pelvis": "tilted forward, solved (about 136 from upright) until the palms reach the floor",
+   "spine": "chest 38 more than the pelvis, head hanging", "arms": "reaching down, palms flat just in front of the feet"},
+ "plank": {"view": "side", "body": "one straight line from head to heels, angle solved (about 15 above horizontal)",
+   "arms": "straight, vertical, wrists under the shoulders", "hands": "flat, fingers forward", "feet": "toes tucked"},
+ "chaturanga": {"view": "side", "body": "straight, almost horizontal (about 3), low", "upper_arms": "along the ribs, horizontal",
+   "elbows": 90, "forearms": "vertical", "feet": "toes tucked"},
+ "upward-dog": {"view": "side", "arms": "straight, vertical, shoulders over the wrists",
+   "spine": "pelvis 16, chest 50, neck 72, head 86 above horizontal (a back bend)", "legs": "straight, thighs off the floor, angle solved (about 18)",
+   "feet": "tops of the feet on the floor"}
+}</pre></div>
+
+<h3>4. Animate the mannequin from a recording</h3>
+<div class="box"><button class="copy" data-t="p4">Copy</button><pre id="p4">Write render_mannequin.py for Blender 5.x (headless): Blender -b --factory-startup -P render_mannequin.py -- --in X.skel.json --out X.mp4. Read a recording of Apple Vision 3D joints (root-relative metres, y up), convert to Blender Z-up, resample on the output frame grid from the timestamps, fill missing frames by interpolation, smooth over 3 frames. Turn the body to face the render camera the way the person faced the real camera (decide from the 2D points), check chirality on the knees (knees bend forward), mirror if the app showed a mirrored picture. Scale the mannequin to the recorded body height. Per frame aim every bone at the next joint (torso twist from hip and shoulder lines, limbs by the smallest swing, feet flat), keep the mannequin's bone lengths, keep the lowest foot on the floor, key quaternions per frame. Fixed front camera framing the whole movement, EEVEE, H.264 MP4 at the recording fps. Print PROGRESS n/N per frame and DONE path, or ERROR reason with a non-zero exit.</pre></div>
+</section>
+
+<section><h2>Ideas for Wyoga</h2>
+<ul>
+<li><b>Reference pictures:</b> the renders can stand next to your own illustrations as "how the body is built" pictures: the same pose from the front, the side and 3/4, with the joints visible as balls. Any new asana is a few lines of pose data and two minutes of rendering, always in the same style.</li>
+<li><b>Ghost skeletons:</b> the same joint targets give the target skeleton the app draws over the camera picture (the user matches the lines, each limb turns green / yellow / red). The 2D keypoints for the floor poses are already in <a href="https://github.com/markoboskoauroville/SKELETON/blob/main/data/poses.json">data/poses.json</a>; the 3D targets give any camera angle.</li>
+<li><b>Correction rules from the angle table:</b> the measured angles above are the targets with tolerances (for example Warrior II front knee 90 +- 15, Down Dog hip angle 75 to 95, Plank hip 165 to 185).</li>
+<li><b>Replay of the user's own practice:</b> a recorded session can be rendered as the mannequin doing exactly what the user did, from any side: a private, faceless "watch yourself" video, also good for showing a teacher.</li>
+<li><b>Side-by-side:</b> the user's mannequin next to the target mannequin in the same picture makes the difference obvious without words.</li>
+</ul>
+</section>
+
+<script>
+document.querySelectorAll('.copy').forEach(function(b){b.addEventListener('click',function(){
+var t=document.getElementById(b.dataset.t).innerText;
+function done(){b.textContent='Copied';b.classList.add('ok');setTimeout(function(){b.textContent='Copy';b.classList.remove('ok')},1800)}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb)}else fb();
+function fb(){var r=document.createRange();r.selectNodeContents(document.getElementById(b.dataset.t));var s=getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand('copy');done()}catch(e){}}
+})});
+</script>
+<script src="https://speechifykeys.pages.dev/speechify-keys.js" defer></script>
+</body>
+</html>
