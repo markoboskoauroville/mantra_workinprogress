@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wyoga: test i prijedlozi</title>
+<meta name="robots" content="noindex">
+<style>
+html{background:#2b2b2b}
+body{margin:0;background:#2b2b2b;color:#e6e6e6;font:16px/1.55 -apple-system,system-ui,sans-serif;padding:0 16px 48px;max-width:760px;margin:0 auto}
+h1{font-size:22px;margin:24px 0 4px}
+h2{font-size:18px;margin:36px 0 8px;color:#fff;border-top:1px solid #555;padding-top:20px}
+p,li{margin:8px 0}
+.box{position:relative;background:#1e1e1e;border:1px solid #555;border-radius:8px;margin:14px 0}
+pre{margin:0;padding:48px 12px 12px;white-space:pre-wrap;word-wrap:break-word;font:13.5px/1.5 ui-monospace,Menlo,monospace;color:#ddd}
+.copy{position:absolute;top:8px;right:8px;background:#e6e6e6;color:#222;border:0;border-radius:6px;padding:10px 18px;font-size:15px;font-weight:600}
+.copy.ok{background:#7bd88f}
+</style>
+</head>
+<body>
+<h1>Wyoga: test i prijedlozi (16.11.2026)</h1>
+<p>Svaki prompt je u svojoj kutiji s gumbom Copy: kopiraj i zalijepi u v0 chat. The rest is in English.</p>
+<section><h2>Wyoga: prompt for v0 to fix the bugs</h2><p>Found: wyoga.app carries <code>&lt;meta name=&quot;generator&quot; content=&quot;v0.app&quot;&gt;</code>, a Next.js (Turbopack) app on Vercel,</p>
+<p>so it was made with <b>v0 by Vercel</b>. The Android app dev.wyoga.app is a Trusted Web Activity wrapper</p>
+<p>(androidbrowserhelper / Bubblewrap-style) around the site. Tested 16.11.2026 on a Nothing Phone 2a, Android 16.</p>
+<p>Paste the block below into the Wyoga chat in v0.</p><div class="box"><button class="copy" data-t="b1">Copy</button><pre id="b1">Fix these bugs in Wyoga. They were found by testing the web app and the Android app (dev.wyoga.app, a Trusted Web Activity that wraps this site) on a Nothing Phone 2a with Android 16. Do not change the design, the asanas or the texts beyond what is listed.
+
+1. Android shows a browser address bar (HIGH). The Android app opens as a Chrome Custom Tab with an X, &quot;wyoga.app&quot; and a menu, instead of full screen, because https://wyoga.app/.well-known/assetlinks.json returns 404. Add the file public/.well-known/assetlinks.json, served as application/json, with this content:
+[{&quot;relation&quot;:[&quot;delegate_permission/common.handle_all_urls&quot;],&quot;target&quot;:{&quot;namespace&quot;:&quot;android_app&quot;,&quot;package_name&quot;:&quot;dev.wyoga.app&quot;,&quot;sha256_cert_fingerprints&quot;:[&quot;80:9C:A7:EF:FA:70:6E:E3:9A:A9:46:B2:7B:91:69:A3:37:76:39:59:F0:BD:FA:FD:4D:48:3F:05:DC:E9:93:D7&quot;]}]
+This is the Google Play app-signing key of the installed app. Make sure no middleware, redirect or rewrite catches /.well-known/ and that the response is not HTML.
+
+2. The alarm cannot ring when the screen is locked (HIGH). A web page cannot wake a locked phone: the sound stops a few seconds after the screen turns off. Do not pretend otherwise. On the alarm screen add a short honest note: &quot;Keep Wyoga open and the screen on for the alarm to ring. A real alarm with a locked screen comes with the next Android version.&quot; Also request a Screen Wake Lock (navigator.wakeLock.request(&#x27;screen&#x27;)) while an alarm is armed and the page is visible, re-request it on visibilitychange, and release it when the alarm is off.
+
+3. The floating cookie button covers content (MEDIUM). It covers the &quot;Report&quot; link in the footer, the right end of the &quot;Ring now&quot; row, and the &quot;Hold for 4s&quot; and mission texts on the practice and ring screens. Move it so it never overlaps content: put it inside the footer as a normal text link &quot;Cookies&quot;, or give the pages bottom padding equal to its height plus env(safe-area-inset-bottom). Hide it completely on the practice screen and the ring screen.
+
+4. The GDPR link in the footer goes to /gdpr, which is a 404 (MEDIUM). Either create the /gdpr page or point the link to the privacy policy section that covers GDPR.
+
+5. The Privacy Policy does not match the app (MEDIUM). It mentions sign-in, email and a PDF guide, but the app has no sign-in. Rewrite it to describe what the app really does: no account, camera frames are processed on the device by the pose model and never uploaded, alarm settings stored locally in the browser, plus the cookies actually used.
+
+6. Back on the practice screen (LOW). In the Android app the first Back press leaves the app while the camera is running, and does nothing when the &quot;Camera access was blocked&quot; message is shown. Push a history entry when the practice overlay opens (history.pushState) and close the overlay on popstate, so Back closes practice and returns to the asana list in both cases. Stop the camera tracks when practice closes.
+
+7. Camera permission and preview (LOW). After &quot;Allow this time&quot; the next launch shows &quot;Camera access was blocked&quot; without asking again. Before showing that message, call getUserMedia again so the browser can ask; show the blocked message only when it is really denied (check navigator.permissions.query({name:&#x27;camera&#x27;}) when available). Also make sure the preview and the skeleton follow the device orientation in portrait (use the video&#x27;s real videoWidth/videoHeight and object-fit, no fixed rotation), and mirror only the front camera.
+
+8. Speed (LOW). The first load of the camera and the pose model takes 10 to 25 seconds on 4G. Start downloading the pose model in the background when the asana list is shown (preload), show progress instead of only &quot;Loading the pose guide...&quot;, and serve the asana pictures as WebP through next/image with proper sizes (the PNGs are about 900 kB each, 2.8 MB together).
+
+9. The camera preview crops the picture (MEDIUM). On a computer (Firefox on a Mac, external camera giving 960x720) the video box is 1480x590 with object-fit: cover, so more than half of the picture&#x27;s height is cut off: the user cannot see their head and feet, though the pose model still sees them. Use object-fit: contain (letterbox on a dark background) so the whole camera picture is always visible on every screen, phone portrait and landscape and desktop, and draw the skeleton in the same contained coordinates so it stays on the body. Also request a higher camera resolution when available (ideal 1280x720 or 1920x1080) instead of a fixed 960x720.
+
+When done, list every file you changed and how I can verify each fix.</pre></div></section>
+<section><h2>Feature suggestion: Wyoga Voice Coach (paid upgrade)</h2><p>Idea: a paid upgrade with a voice and an AI server. While you hold a pose, the app speaks to you</p>
+<p>and corrects you limb by limb: &quot;lift your left arm a little&quot;, &quot;your right leg is not straight&quot;.</p>
+<p>The voice comes from the Speechify API.</p>
+<p>How it should be built so it is fast and cheap:</p>
+<ul>
+<li><b>The checking stays on the phone.</b> The pose model already gives the joints (shoulders, elbows, hips, knees, ankles) many times a second. Each asana gets target angles (for example Warrior II: front knee about 90°, arms level at 180°). The app compares the live angles with the targets and finds the worst limb. No server round trip per frame, so the advice comes within a second.</li>
+<li><b>The voice is pre-rendered, not generated live.</b> A fixed set of short phrases (&quot;lift your left arm&quot;, &quot;straighten your right leg&quot;, &quot;hips higher&quot;, &quot;good, hold it&quot;) is rendered once with the Speechify API, stored as small audio files, and played instantly. That costs a few cents once instead of per user.</li>
+<li><b>The AI server does the coaching on top.</b> After a session (or every few seconds), the angle summary goes to an AI model on the server, which writes a personal sentence (&quot;your Tree is steadier than yesterday; press the foot into the thigh&quot;) and Speechify speaks it. This is the part that justifies the paid tier.</li>
+<li><b>Paid upgrade.</b> Web: Stripe. Android from Google Play: digital subscriptions must go through Google Play Billing; a TWA can use it through the Digital Goods API (Bubblewrap supports it).</li>
+<li><b>Keys stay on the server.</b> The Speechify and AI keys never go into the web page; the page calls Svemir&#x27;s own API route (a Next.js route handler on Vercel), which calls Speechify and the AI.</li>
+</ul>
+<p>Prompt for v0 (after the bug fixes are done):</p><div class="box"><button class="copy" data-t="b2">Copy</button><pre id="b2">Add a &quot;Voice Coach&quot; premium feature to Wyoga.
+
+1. Pose feedback on the device: for each of the 5 asanas, define target joint angles from the pose landmarks (e.g. Warrior II: front knee ~90°, arms horizontal ~180° between wrists through shoulders, torso upright; Tree: standing leg straight, raised foot at knee or above, palms together above the chest; Down Dog: hips highest point, arms and legs straight; Upward Salute: arms straight overhead; Sun Salutation per step). Every 300 ms compute the live angles, find the single worst-off limb beyond a tolerance, and map it to one correction id such as LEFT_ARM_UP, RIGHT_LEG_STRAIGHTEN, HIPS_HIGHER, ARMS_LEVEL. Say at most one correction every 3 seconds; say &quot;Good, hold it&quot; when everything is within tolerance.
+
+2. Voice: a server route /api/voice (Next.js route handler) that turns a phrase into speech with the Speechify API (key in the SPEECHIFY_API_KEY environment variable, never sent to the browser). Pre-render all fixed correction phrases once and cache them (Vercel Blob or the public folder), so the app plays them instantly; play them with an audio element that does not stop the camera.
+
+3. AI coach: a server route /api/coach that receives a short JSON summary of the session (asana, hold time, the corrections given, best and worst angles) and returns one or two encouraging, specific sentences from an AI model (key in an environment variable), spoken through /api/voice.
+
+4. Premium: Voice Coach is locked behind a &quot;Voice Coach&quot; upgrade screen. On the web use Stripe Checkout (subscription). When running inside the Android app (Trusted Web Activity from Google Play), use the Digital Goods API with Google Play Billing instead of Stripe, because Play requires it for digital subscriptions. Keep the free version exactly as it is.
+
+5. Settings: Voice Coach on/off, voice choice, language English (Croatian later).</pre></div></section>
+<section><h2>Prompt for v0: the pose correction algorithm</h2><p>This is the engine under the Voice Coach, asked of v0 on its own so it can be built and tested first, with text</p>
+<p>feedback on screen; the voice is added on top later.</p><div class="box"><button class="copy" data-t="b3">Copy</button><pre id="b3">Build a pose correction algorithm into Wyoga&#x27;s practice screen. It must run entirely in the browser on the pose landmarks the app already gets from the camera (no server call per frame). Do not change the design or the existing pose check that stops the alarm.
+
+1. Landmarks and angles. From the pose model&#x27;s landmarks (shoulders, elbows, wrists, hips, knees, ankles, plus nose) compute every frame:
+   - joint angles: left/right elbow, shoulder (arm vs torso), hip (torso vs thigh), knee;
+   - segment angles against the vertical/horizontal: torso tilt, each arm&#x27;s elevation, shoulder line and hip line tilt;
+   - use only landmarks with visibility &gt; 0.6; if a needed one is missing, say &quot;Step back so your whole body is in view&quot; instead of a correction.
+   Smooth each value with a moving average over about 300 ms so jitter does not trigger advice. Detect which side faces the camera for side-on poses (Down Dog) and mirror left/right correctly for the front camera, so &quot;left arm&quot; always means the user&#x27;s own left arm.
+
+2. Pose definitions as data. One config object per asana (Upward Salute, Down Dog, Warrior II, Tree, each step of Sun Salutation), each rule with: id, the measured angle, target, tolerance, priority, and the instruction text. Examples:
+   - Upward Salute: both elbows 170-180°, both arms elevated 160-180°, torso vertical within 10°.
+   - Warrior II: front knee 80-100° and over the ankle, back leg straight 165-180°, arms horizontal within 10°, torso vertical within 10°, hips square to the camera.
+   - Tree: standing knee 170-180°, raised foot at or above the other knee, hips level within 8°, palms together in front of the chest or overhead.
+   - Down Dog: hips the highest point, arms straight 165-180°, legs straight 160-180°, hip angle 60-100°.
+   Put tolerances in one place so they are easy to tune.
+
+3. Choosing the correction. Each frame, score every rule (how far outside its tolerance, times its priority). Pick the single worst rule. Only give a correction when it has been the worst for at least 1 second, and at most one new correction every 3 seconds; never repeat the same one within 6 seconds. Phrase it as a direction of movement, short and concrete, with the body part and side: &quot;Lift your left arm a little higher&quot;, &quot;Straighten your right leg&quot;, &quot;Bend your front knee more&quot;, &quot;Level your hips&quot;, &quot;Lift your hips higher&quot;. When every rule is inside tolerance, show &quot;Good, hold it&quot; and start the hold timer; a break longer than 0.5 s resets the hold.
+
+4. On screen. Show the current correction as a large text line over the camera picture, and colour the skeleton: the limb that needs correcting in orange, correct limbs in green. Add a small accuracy score 0-100 for the current pose.
+
+5. Session summary. When practice ends, store: asana, time held, the corrections given (counts), and best and worst value for each rule. Keep it locally, and expose it as a JSON object, because a later paid AI coach will read it.
+
+6. Hooks for voice. Every correction emits an event with a stable id (e.g. LEFT_ARM_HIGHER, RIGHT_LEG_STRAIGHTEN, FRONT_KNEE_BEND, HIPS_LEVEL, HIPS_HIGHER, HOLD_GOOD, STEP_BACK) plus its text, so a voice layer can later play a pre-recorded phrase for each id.
+
+7. A debug view (hidden behind a long-press on the title): live angles, the active rule and its distance from target, frame rate. Make sure it runs at a steady frame rate on a mid-range Android phone (process the pose at 15-20 fps if needed while the video stays smooth).
+
+When done, explain where the pose definitions live and how to add a new asana, and how I can test each correction.</pre></div></section>
+<section><h2>Prompt for v0: match the target skeleton, green / yellow / red</h2><p>Idea: the user does not copy the photo of the pose; the app draws the pose&#x27;s own skeleton (the</p>
+<p>&quot;artificial skeleton&quot;) over the camera, and the user moves until their skeleton lies on it. Aligned = green,</p>
+<p>close = yellow, far = red.</p><div class="box"><button class="copy" data-t="b4">Copy</button><pre id="b4">Add &quot;match the skeleton&quot; to Wyoga&#x27;s practice screen, on top of the existing pose detection.
+
+1. Target skeleton: for each asana (and each Sun Salutation step) create a reference skeleton by running the same pose model once on the asana&#x27;s reference photo (or store hand-tuned normalised keypoints as data). Save it as normalised keypoints.
+2. Draw it as a ghost (white, translucent, thick lines) over the live camera, scaled to the user: scale by the user&#x27;s torso length (mid-shoulder to mid-hip) and anchor it at the user&#x27;s hip centre, so it stands where the user stands at any distance. Mirror it consistently with the front camera.
+3. Compare per segment (upper arm, forearm, thigh, shin, torso, shoulder line, hip line) by the angle difference between the user&#x27;s segment and the ghost&#x27;s segment (angles do not depend on body size or distance). Colour each of the user&#x27;s own bones: green within 10°, yellow within 25°, red beyond. Keep thresholds in one config.
+4. Overall: the worst segment decides the pose colour, shown as a coloured ring around the camera view and a score 0-100. Green for the asana&#x27;s hold time counts as held (this replaces or feeds the current hold check that stops the alarm).
+5. It works together with the correction text (and later the voice): the red segment is the one the correction talks about.
+6. Must run smoothly on a mid-range Android phone; the whole camera picture stays visible (no cropping).</pre></div></section>
+<section><h2>Prompt for v0: three levels and a guided flow</h2><div class="box"><button class="copy" data-t="b5">Copy</button><pre id="b5">Add levels and a guided flow to the skeleton matching.
+
+1. Level setting: Beginner yogi, Middle yogi, Professional yogi. Each level sets the tolerance per segment and the hold time:
+   - Beginner: green within 20°, yellow within 40°, hold 2 s (an approximation of the pose is enough to go on);
+   - Middle: green within 12°, yellow within 25°, hold 3 s;
+   - Professional: green within 6°, yellow within 14°, hold 5 s.
+   Keep the table in one config; remember the user&#x27;s level.
+2. Guided flow: a session plays poses in order. When the current pose is achieved (all segments green for the level&#x27;s hold time), play a short success sound and move to the next pose.
+3. At every new pose the voice says the pose&#x27;s name and 2-3 basic cues (for example &quot;Warrior Two. Feet wide, front knee over the ankle. Arms level, gaze over the front hand.&quot;), and the same text is shown on screen; then the user matches their skeleton to the ghost skeleton. Cues are stored with each pose&#x27;s data. Use the pre-rendered Speechify phrases from the Voice Coach (one audio file per pose intro), so it plays instantly.
+4. Show &quot;Pose 2 of 5&quot;, the level, and the score. In the alarm mode, the alarm stops when the chosen mission is achieved at the user&#x27;s level.</pre></div></section>
+<section><h2>Prompt for v0: free and paid versions, device voice and paid voice</h2><p>The free version speaks with the best voice already on the device; the paid version adds a better voice</p>
+<p>from Svemir&#x27;s own voice server, which he can sell. Users see every pose, but in the free version many are greyed out.</p><div class="box"><button class="copy" data-t="b6">Copy</button><pre id="b6">Split Wyoga into a Free and a Premium version. Users always see everything; locked things are greyed out with a small lock and open the upgrade screen when tapped.
+
+FREE
+- The 5 current asanas, the alarm with its mission, practice, skeleton matching with the green/yellow/red colours, the Beginner level.
+- Voice: the device&#x27;s own text-to-speech (Web Speech API, speechSynthesis), free and offline. Pick the best voice available automatically: prefer voices whose name contains &quot;Enhanced&quot;, &quot;Premium&quot;, &quot;Neural&quot; or &quot;Natural&quot; for the user&#x27;s language, then any local voice for that language, then the default; remember the choice and let the user change it in Settings with a &quot;Test voice&quot; button. Speak the pose name, 2-3 basic cues and the corrections. Handle that voices load asynchronously (voiceschanged event).
+
+PREMIUM (subscription)
+- The full pose library (all other asanas, greyed out in Free), guided sequences (morning flow, Sun Salutation A/B, evening wind-down), Middle and Professional levels.
+- Premium voice: natural voice from Svemir&#x27;s own voice server (Speechify API behind his server route /api/voice; keys only on the server). Pre-rendered phrases for pose intros, cues and corrections, cached so they play instantly and work offline after the first download. If the server cannot be reached, fall back to the device voice silently.
+- The AI coach (personal spoken feedback after each pose and session), progress history with charts, proof-of-pose photo log without limits.
+- Payment: Stripe on the web; inside the Android app from Google Play, Google Play Billing through the Digital Goods API (required by Play for digital subscriptions). One entitlement check used everywhere (isPremium), stored server-side per account, so the user can log in on another device and keep Premium.
+
+UPGRADE SCREEN
+- A clear comparison table Free vs Premium, the price, a 7-day free trial, &quot;Restore purchase&quot;.
+- Never interrupt a running alarm or practice with the upgrade screen.</pre></div></section>
+<section><h2>For Svemir: finding beta testers to get Wyoga published</h2><p>The rule: a personal Google Play developer account (created after November 2023) needs a <b>closed test</b> with at least</p>
+<p><b>12 testers who stay opted in for 14 days in a row</b> before it may apply for production. (It was 20 until late 2024;</p>
+<p>check the Play Console&#x27;s own wording, it shows the live count.) An internal test, like the current link, does not count.</p>
+<p>How to get there fast:</p>
+<p>1. <b>Move to a closed test track</b> in Play Console (Testing → Closed testing), and manage the testers as a</p>
+<p>   <b>Google Group</b> (anyone who joins the group is a tester; no need to collect emails one by one). Share one join link.</p>
+<p>2. <b>Ask 20, not 12.</b> Some never opt in or uninstall; the 14 days restart for the count if you drop below 12.</p>
+<p>3. <b>Your own circle first:</b> family, friends, yoga students, the people you practise with. Share it in the</p>
+<p>   yoga and community groups he is in (yoga circles in Zagreb, Auroville, Dharamkot) and with his own students.</p>
+<p>4. <b>Yoga teachers and studios:</b> a free Premium year for a studio that brings 5 testers. Teachers love a tool that</p>
+<p>   gets students to practise in the morning.</p>
+<p>5. <b>Tester exchange communities:</b> Reddit r/AndroidAppTesting and r/TestersCommunity, and Facebook/Discord groups</p>
+<p>   for &quot;12 testers 14 days&quot;: developers test each other&#x27;s apps. Free, quick, but feedback is shallow.</p>
+<p>6. <b>Make it easy:</b> a one-page &quot;How to join&quot; with three steps (join the group, open the Play link, install), in</p>
+<p>   Croatian and English, and a WhatsApp message people can forward.</p>
+<p>7. <b>Keep them active:</b> ask testers to open the app every few days during the 14 days and give one piece of</p>
+<p>   feedback (a short Google Form inside the app&#x27;s menu). Google&#x27;s production questionnaire asks how testers were</p>
+<p>   recruited, how they used the app and what you changed from their feedback: keep notes from day one.</p>
+<p>8. <b>Thank them:</b> testers get Premium free for a year when it launches. That turns testers into the first reviews.</p></section>
+<section><h2>Idea for Svemir: more cameras, better skeleton</h2><p>One camera sees the body flat. It has to guess how far an arm or a leg points towards it or away, so a raised arm</p>
+<p>pointing at the camera, or a hand behind the back, is often wrong. With two or more cameras looking from different</p>
+<p>angles (for example the phone in front and a second phone or a laptop at the side), each joint is seen twice. Knowing</p>
+<p>where the cameras stand, the app calculates the joint&#x27;s real position in space (triangulation), the same way our two</p>
+<p>eyes see depth. The farther apart the cameras (ideally about 90°), the better the depth.</p>
+<p>What it takes:</p>
+<ul>
+<li><b>Calibration once:</b> each camera&#x27;s lens (focal length and distortion, important for wide lenses) and where the cameras stand relative to each other. The usual way: the user shows a printed checkerboard (ChArUco board) to all cameras for a few seconds; the app works it out.</li>
+<li><b>Time sync:</b> frames from both cameras matched by timestamp (a clap or a flash at the start also works).</li>
+<li><b>Connection:</b> the second phone joins the session by a QR code and sends its pose points (not video) over the local Wi-Fi or WebRTC, so it is light.</li>
+<li>The cameras do not need to be the same model or lens; each one is calibrated on its own.</li>
+</ul>
+<p>The free open-source FreeMoCap project does exactly this with ordinary webcams and is a good reference. For Wyoga it</p>
+<p>could be a Premium &quot;Pro tracking&quot; mode: two phones, much more precise corrections, especially for side-on poses like</p>
+<p>Down Dog and Warrior II.</p><div class="box"><button class="copy" data-t="b7">Copy</button><pre id="b7">Add an optional &quot;Two cameras&quot; mode to Wyoga (Premium). A second phone joins the practice session by scanning a QR code shown on the first phone; both run the pose model locally and stream only pose landmarks with timestamps (WebRTC data channel, or a small relay) to the main phone. Calibration: a one-minute wizard where the user holds a printed ChArUco board (offer a PDF) visible to both cameras; compute each camera&#x27;s intrinsics and the relative pose. Then triangulate each landmark from both views (weighted by confidence, fall back to one view when a joint is seen by one camera only), smooth, and feed the 3D skeleton to the matching and correction logic in place of the single-camera estimate. Show both camera feeds side by side with the skeleton, and a &quot;tracking quality&quot; indicator.</pre></div></section>
+<script>
+document.querySelectorAll('.copy').forEach(function(b){b.addEventListener('click',function(){
+var t=document.getElementById(b.dataset.t).innerText;
+function done(){b.textContent='Copied';b.classList.add('ok');setTimeout(function(){b.textContent='Copy';b.classList.remove('ok')},1800)}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb)}else fb();
+function fb(){var r=document.createRange();r.selectNodeContents(document.getElementById(b.dataset.t));var s=getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand('copy');done()}catch(e){}}
+})});
+</script>
+<script src="https://speechifykeys.pages.dev/speechify-keys.js" defer></script>
+</body>
+</html>
